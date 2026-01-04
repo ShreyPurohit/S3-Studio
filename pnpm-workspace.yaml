@@ -1,0 +1,11 @@
+packages:
+    # Applications (runnable services)
+    - apps/*
+
+    # Reusable shared packages (types, configs, utils)
+    - packages/*
+
+    # Explicit exclusions (defensive, optional)
+    - '!**/node_modules'
+    - '!**/dist'
+    - '!**/build'
