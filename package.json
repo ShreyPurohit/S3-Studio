@@ -21,11 +21,11 @@
   },
   "scripts": {
     "build": "pnpm build:server && pnpm build:ui && pnpm copy:ui",
-    "build:server": "pnpm --filter explorer-server build",
+    "build:server": "pnpm --filter @object-explorer/server build",
     "build:ui": "pnpm --filter @object-explorer/ui build",
     "copy:ui": "node scripts/copy-ui-assets.js",
-    "clean": "pnpm --filter explorer-server clean && pnpm --filter @object-explorer/ui clean && node -e \"require('fs').rmSync('apps/explorer-server/dist', {recursive: true, force: true})\"",
-    "dev": "pnpm --filter explorer-server dev",
+    "clean": "pnpm --filter @object-explorer/server clean && pnpm --filter @object-explorer/ui clean && node -e \"require('fs').rmSync('apps/explorer-server/dist', {recursive: true, force: true})\"",
+    "dev": "pnpm --filter @object-explorer/server dev",
     "dev:ui": "pnpm --filter @object-explorer/ui dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -45,7 +45,8 @@
   "packageManager": "pnpm@10.28.0",
   "dependencies": {
     "fastify": "^5.6.2",
-    "@fastify/static": "^8.0.0"
+    "@fastify/static": "^8.0.0",
+    "@aws-sdk/client-s3": "^3.966.0"
   },
   "devDependencies": {
     "prettier": "^3.7.4"
