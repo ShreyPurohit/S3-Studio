@@ -1,1 +1,14 @@
+# Dependencies
 node_modules
+
+# Build output directories
+dist/
+**/dist/
+apps/explorer-server/dist/
+apps/explorer-ui/dist/
+apps/**/dist/
+apps/**/test-s3-studio/
+
+# TypeScript build info
+*.tsbuildinfo
+**/*.tsbuildinfo

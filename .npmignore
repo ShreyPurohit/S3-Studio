@@ -1,0 +1,47 @@
+# Source files
+apps/explorer-server/src/
+apps/explorer-ui/src/
+apps/explorer-ui/public/
+apps/explorer-ui/index.html
+
+# Build artifacts (we only want the final dist)
+apps/explorer-ui/dist/
+
+# Development files
+*.ts
+!*.d.ts
+tsconfig.json
+tsconfig.*.json
+vite.config.ts
+eslint.config.js
+
+# Development dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.cursor/
+
+# Documentation (keep README.md, exclude others)
+REQUIREMENT.md
+STRUCTURE.md
+PROJECT_PROGRESS.md
+
+# Scripts (build scripts not needed in package)
+scripts/
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+tests/
+
+# Only include the compiled dist and essential files
+# The "files" field in package.json is the primary control

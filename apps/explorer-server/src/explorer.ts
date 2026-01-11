@@ -7,10 +7,18 @@ export interface ObjectExplorerConfig {
     port?: number;
     host?: string; // defaults to localhost
     mode?: Mode;
-    storage: {
-        provider: 'local';
-        rootDir: string;
-    };
+    storage:
+        | {
+              provider: 'local';
+              rootDir: string;
+          }
+        | {
+              provider: 's3';
+              region: string;
+              accessKeyId: string;
+              secretAccessKey: string;
+              endpoint?: string;
+          };
     auth?: {
         token?: string;
     };

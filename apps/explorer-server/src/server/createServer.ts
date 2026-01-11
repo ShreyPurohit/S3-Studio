@@ -18,23 +18,26 @@ export default async function createServer(
     // register common plugins
     await server.register(eventsPlugin);
     await server.register(storagePlugin, { storage: config.storage });
-    server.log.info(
-        { hasStorage: !!(server as any).storage },
-        'storage plugin registration status'
-    );
 
     // UI plugin (serves static UI or placeholder)
     await server.register(uiPlugin, { mode: config.mode });
+
+    // Check storage after all plugins are registered
+    server.ready(() => {
+        server.log.info(
+            { hasStorage: !!(server as any).storage },
+            'storage plugin registration status'
+        );
+    });
 
     // Auth plugin only if admin mode
     if (config.mode === 'admin') {
         await server.register(authPlugin, { auth: config.auth });
     }
 
-    // Register routes
+    // Register routes (routes that don't depend on storage are registered here)
     await server.register(healthRoute, { prefix: '/api' });
-    await server.register(bucketsReadRoute, { prefix: '/api' });
-    await server.register(objectsReadRoute, { prefix: '/api' });
+    // bucketsReadRoute and objectsReadRoute are now registered inside the storage plugin
 
     return server;
 }

@@ -2,9 +2,11 @@
   "name": "explorer-server",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "clean": "node -e \"require('fs').rmSync('dist', {recursive: true, force: true})\"",
     "dev": "tsx src/dev.ts"
   },
   "keywords": [],
@@ -12,10 +14,13 @@
   "license": "ISC",
   "packageManager": "pnpm@10.26.1",
   "devDependencies": {
-    "typescript": "~5.9.3",
-    "tsx": "^3.12.7"
+    "@types/node": "^24.10.4",
+    "tsx": "^3.12.7",
+    "typescript": "~5.9.3"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.966.0",
+    "@fastify/static": "^7.0.4",
     "fastify": "^5.6.2"
   }
 }
