@@ -68,7 +68,7 @@ import { startObjectExplorer } from 's3-studio';
 
 async function test() {
     const server = await startObjectExplorer({
-        port: 4567,
+        port: 4570,
         mode: 'view',
         storage: {
             provider: 'local',
@@ -76,7 +76,7 @@ async function test() {
         },
     });
 
-    console.log('✅ S3 Studio running at http://localhost:4567');
+    console.log('✅ S3 Studio running at http://localhost:4570');
 }
 
 test().catch(console.error);
@@ -228,7 +228,7 @@ if (!existsSync('./test-data')) {
 
 // Start S3 Studio
 startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'view',
     storage: {
         provider: 'local',
@@ -236,9 +236,9 @@ startObjectExplorer({
     },
 })
     .then(() => {
-        console.log('✅ S3 Studio running at http://localhost:4567');
+        console.log('✅ S3 Studio running at http://localhost:4570');
         console.log('📁 Test data in ./test-data');
-        console.log('🌐 Open http://localhost:4567 in your browser');
+        console.log('🌐 Open http://localhost:4570 in your browser');
     })
     .catch((err) => {
         console.error('❌ Error:', err);

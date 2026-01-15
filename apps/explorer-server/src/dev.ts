@@ -3,7 +3,7 @@ import { startObjectExplorer } from './explorer';
 const root = process.env.OBJECT_EXPLORER_ROOT ?? './data';
 
 startObjectExplorer({
-    port: Number(process.env.PORT ?? 4567),
+    port: Number(process.env.PORT ?? 4570),
     mode: 'view',
     storage: { provider: 'local', rootDir: root },
 })

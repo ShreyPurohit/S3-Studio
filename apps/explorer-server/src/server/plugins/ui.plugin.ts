@@ -1,6 +1,6 @@
 import fastifyStatic from '@fastify/static';
 import { FastifyPluginAsync } from 'fastify';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -18,22 +18,43 @@ function getUIPath(): string {
 
     // When running from built package (in node_modules), UI is alongside the server code
     // When running from local build, UI is two levels up
+    // When running from linked package, check source directory first for fresh builds
     const possiblePaths = [
+        join(__dirname, '../../ui'), // local build structure (check this first!)
         join(__dirname, 'ui'), // node_modules package structure
-        join(__dirname, '../../ui'), // local build structure
     ];
 
+    console.error('🔥 Checking paths:', possiblePaths);
+
     for (const path of possiblePaths) {
+        console.error('🔥 Checking path:', path, 'exists:', existsSync(path));
         if (existsSync(path)) {
+            // Check if this is a stale linked build (CSS file exists but is empty)
+            const cssPath = join(path, 'assets', 'index-tn0RQdqM.css'); // known stale filename
+            if (existsSync(cssPath)) {
+                const cssContent = readFileSync(cssPath, 'utf8');
+                if (cssContent.trim() === '') {
+                    console.error(
+                        '🔥 Found stale empty CSS, skipping this path'
+                    );
+                    continue; // Skip this stale path
+                }
+            }
+            console.error('🔥 Found UI path:', path);
             return path;
         }
     }
 
-    // Fallback - assume node_modules structure
-    return join(__dirname, 'ui');
+    // Fallback - assume local build structure
+    const fallbackPath = join(__dirname, '../../ui');
+    console.error('🔥 Using fallback path:', fallbackPath);
+    return fallbackPath;
 }
 
 const uiPath = getUIPath();
+console.log('🔍 UI Path resolved to:', uiPath);
+console.log('🔍 UI Path exists:', existsSync(uiPath));
+console.log('🔍 Current __dirname:', dirname(fileURLToPath(import.meta.url)));
 
 const uiPlugin: FastifyPluginAsync<{ mode?: string }> = async (
     fastify,

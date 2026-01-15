@@ -16,7 +16,7 @@ pnpm install
 pnpm dlx tsx src/dev.ts
 ```
 
-The server will start on `127.0.0.1:4567` by default and serve a minimal UI at `/` and API at `/api`.
+The server will start on `127.0.0.1:4570` by default and serve a minimal UI at `/` and API at `/api`.
 
 Environment variables:
 

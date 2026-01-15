@@ -71,7 +71,7 @@ import { startObjectExplorer } from 's3-studio';
 
 // Start in view mode (read-only)
 await startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'view',
     storage: {
         provider: 'local',
@@ -79,7 +79,7 @@ await startObjectExplorer({
     },
 });
 
-console.log('S3 Studio running at http://localhost:4567');
+console.log('S3 Studio running at http://localhost:4570');
 ```
 
 ### Admin Mode (With Mutations)
@@ -89,7 +89,7 @@ import { startObjectExplorer } from 's3-studio';
 
 // Start in admin mode (with authentication)
 await startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'admin',
     storage: {
         provider: 'local',
@@ -100,7 +100,7 @@ await startObjectExplorer({
     },
 });
 
-console.log('S3 Studio (Admin) running at http://localhost:4567');
+console.log('S3 Studio (Admin) running at http://localhost:4570');
 ```
 
 ### Using with CommonJS
@@ -109,7 +109,7 @@ console.log('S3 Studio (Admin) running at http://localhost:4567');
 const { startObjectExplorer } = require('s3-studio');
 
 startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'view',
     storage: {
         provider: 'local',
@@ -126,7 +126,7 @@ startObjectExplorer({
 
 | Option             | Type                | Default       | Description                                     |
 | ------------------ | ------------------- | ------------- | ----------------------------------------------- |
-| `port`             | `number`            | `4567`        | Port number for the server                      |
+| `port`             | `number`            | `4570`        | Port number for the server                      |
 | `host`             | `string`            | `'127.0.0.1'` | Host to bind to (defaults to localhost)         |
 | `mode`             | `'view' \| 'admin'` | `'view'`      | Operation mode                                  |
 | `storage`          | `object`            | **Required**  | Storage provider configuration                  |
@@ -197,7 +197,7 @@ your-storage-root/
 
 ```bash
 curl -H "X-Admin-Token: your-secret-admin-token" \
-     -X POST http://localhost:4567/api/buckets \
+     -X POST http://localhost:4570/api/buckets \
      -d '{"name": "my-bucket"}'
 ```
 
@@ -217,7 +217,7 @@ Starts the S3 Studio server and returns the server instance.
 
 ```typescript
 const server = await startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'view',
     storage: {
         provider: 'local',
@@ -226,7 +226,7 @@ const server = await startObjectExplorer({
 });
 
 // Server is now running
-// You can access it at http://localhost:4567
+// You can access it at http://localhost:4570
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
@@ -279,14 +279,14 @@ app.get('/', (req, res) => {
 
 // Start S3 Studio on a separate port (runs its own server internally)
 startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'view',
     storage: {
         provider: 'local',
         rootDir: './data',
     },
 }).then(() => {
-    console.log('✅ S3 Studio running at http://localhost:4567');
+    console.log('✅ S3 Studio running at http://localhost:4570');
 });
 
 // Start your Express app
@@ -304,14 +304,14 @@ import { startObjectExplorer } from 's3-studio';
 
 async function main() {
     const server = await startObjectExplorer({
-        port: 4567,
+        port: 4570,
         storage: {
             provider: 'local',
             rootDir: process.env.STORAGE_ROOT || './data',
         },
     });
 
-    console.log(`🚀 S3 Studio running at http://localhost:4567`);
+    console.log(`🚀 S3 Studio running at http://localhost:4570`);
 }
 
 main().catch(console.error);
@@ -324,7 +324,7 @@ import { startObjectExplorer } from 's3-studio';
 
 async function main() {
     const server = await startObjectExplorer({
-        port: Number(process.env.PORT) || 4567,
+        port: Number(process.env.PORT) || 4570,
         host: process.env.HOST || '127.0.0.1',
         mode: 'admin',
         storage: {
@@ -356,7 +356,7 @@ async function main() {
     // Start S3 Studio on a separate port
     // It runs its own server internally - no framework needed!
     await startObjectExplorer({
-        port: 4567,
+        port: 4570,
         mode: 'view',
         storage: {
             provider: 'local',
@@ -372,7 +372,7 @@ async function main() {
 
     app.listen(3000, () => {
         console.log('Main app: http://localhost:3000');
-        console.log('S3 Studio: http://localhost:4567');
+        console.log('S3 Studio: http://localhost:4570');
     });
 }
 
@@ -388,7 +388,7 @@ import { startObjectExplorer } from 's3-studio';
 
 async function main() {
     const server = await startObjectExplorer({
-        port: 4567,
+        port: 4570,
         storage: {
             provider: 'local',
             rootDir: './data',
@@ -483,7 +483,7 @@ s3-studio/
     pnpm dev
     ```
 
-    This starts the server at `http://localhost:4567` (default port).
+    This starts the server at `http://localhost:4570` (default port).
 
 2. **Start the UI (separate dev server):**
 
@@ -503,7 +503,7 @@ s3-studio/
 4. **Set environment variables (optional):**
     ```bash
     export OBJECT_EXPLORER_ROOT=./data
-    export PORT=4567
+    export PORT=4570
     ```
 
 ### Building for Production

@@ -76,7 +76,7 @@ Example usage:
 import { startObjectExplorer } from 'object-explorer';
 
 startObjectExplorer({
-    port: 4567,
+    port: 4570,
     mode: 'view',
     storage: {
         provider: 'local',

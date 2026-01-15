@@ -30,7 +30,7 @@ export async function startObjectExplorer(
     const server = await createServer(config);
 
     const host = config.host ?? '127.0.0.1';
-    const port = config.port ?? 4567;
+    const port = config.port ?? 4570;
 
     await server.listen({ port, host });
     return server;
