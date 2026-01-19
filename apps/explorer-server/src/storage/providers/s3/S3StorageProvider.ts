@@ -9,6 +9,7 @@ import {
     GetObjectCommand,
     PutObjectCommand,
     DeleteObjectCommand,
+    BucketLocationConstraint,
 } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 
@@ -82,7 +83,7 @@ export default class S3StorageProvider implements StorageProvider {
             // Only add LocationConstraint for regions other than us-east-1
             ...(region !== 'us-east-1' && {
                 CreateBucketConfiguration: {
-                    LocationConstraint: region as any, // AWS SDK types are complex, using any for now
+                    LocationConstraint: region as BucketLocationConstraint, // Correct AWS SDK type
                 },
             }),
         });

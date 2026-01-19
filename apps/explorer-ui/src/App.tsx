@@ -55,7 +55,8 @@ function getFileInfo(filename: string) {
 export default function App() {
     const [buckets, setBuckets] = useState<string[]>([]);
     const [selected, setSelected] = useState<string | null>(null);
-    const [objects, setObjects] = useState<string[]>([]);
+    const [currentPrefix, setCurrentPrefix] = useState<string>('');
+    const [objects, setObjects] = useState<Record<string, string[]>>({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -73,23 +74,47 @@ export default function App() {
     }, []);
 
     useEffect(() => {
-        if (!selected) return setObjects([]);
+        if (!selected) {
+            setObjects({});
+            setCurrentPrefix('');
+            return;
+        }
         (async () => {
             setLoading(true);
             try {
-                const objs = await listObjects(selected);
-                setObjects(objs);
+                const response = await listObjects(
+                    selected,
+                    currentPrefix || undefined
+                );
+                setObjects(response.objects);
             } catch (err) {
-                console.error(err);
+                console.error('Failed to load objects:', err);
+                setObjects({});
             } finally {
                 setLoading(false);
             }
         })();
-    }, [selected]);
+    }, [selected, currentPrefix]);
 
-    const handleDownload = (obj: string) => {
-        if (selected) {
-            window.open(getDownloadUrl(selected, obj), '_blank');
+    const handleItemClick = (key: string, isFolder: boolean) => {
+        if (isFolder) {
+            // Navigate into folder
+            setCurrentPrefix(key);
+        } else {
+            // Download file
+            if (selected) {
+                const fullKey = currentPrefix ? `${currentPrefix}${key}` : key;
+                window.open(getDownloadUrl(selected, fullKey), '_blank');
+            }
+        }
+    };
+
+    const handleBackClick = () => {
+        if (currentPrefix) {
+            // Go up one level
+            const parts = currentPrefix.split('/').filter((p) => p);
+            parts.pop();
+            setCurrentPrefix(parts.length > 0 ? parts.join('/') + '/' : '');
         }
     };
 
@@ -121,7 +146,13 @@ export default function App() {
             <div className="s3-toolbar">
                 <button
                     className="s3-toolbar-btn"
-                    onClick={() => setSelected(null)}
+                    onClick={() => {
+                        if (currentPrefix) {
+                            handleBackClick();
+                        } else {
+                            setSelected(null);
+                        }
+                    }}
                     disabled={!selected}
                     title="Back"
                 >
@@ -132,7 +163,14 @@ export default function App() {
                 </button>
                 <button
                     className="s3-toolbar-btn"
-                    onClick={() => selected && setSelected(selected)}
+                    onClick={() => {
+                        if (selected) {
+                            // Refresh current view
+                            const tempPrefix = currentPrefix;
+                            setCurrentPrefix('');
+                            setTimeout(() => setCurrentPrefix(tempPrefix), 0);
+                        }
+                    }}
                     title="Refresh"
                 >
                     ⟳
@@ -140,7 +178,11 @@ export default function App() {
 
                 <div className="s3-address-bar">
                     <span className="s3-address-icon">{'\u{1F4BE}'}</span>
-                    <span>{selected ? `s3://${selected}/` : 'S3 Buckets'}</span>
+                    <span>
+                        {selected
+                            ? `s3://${selected}/${currentPrefix || ''}`
+                            : 'S3 Buckets'}
+                    </span>
                 </div>
             </div>
 
@@ -176,42 +218,133 @@ export default function App() {
                             <div className="s3-empty-icon">{'\u{1FAA3}'}</div>
                             <div>Select a bucket to browse files</div>
                         </div>
-                    ) : loading && objects.length === 0 ? (
+                    ) : loading && Object.keys(objects).length === 0 ? (
                         <div className="s3-loading">
                             <div className="s3-spinner" />
                             Loading objects...
                         </div>
-                    ) : objects.length === 0 ? (
+                    ) : Object.keys(objects).length === 0 ? (
                         <div className="s3-content-empty">
                             <div className="s3-empty-icon">{'\u{1F4C2}'}</div>
-                            <div>This bucket is empty</div>
+                            <div>
+                                This {currentPrefix ? 'folder' : 'bucket'} is
+                                empty
+                            </div>
                         </div>
                     ) : (
                         <div className="s3-file-grid">
-                            {objects.map((obj) => {
-                                const { name, icon, isFolder } =
-                                    getFileInfo(obj);
-                                return (
-                                    <button
-                                        key={obj}
-                                        className="s3-file-item"
-                                        onClick={() =>
-                                            !isFolder && handleDownload(obj)
-                                        }
-                                        onDoubleClick={() =>
-                                            !isFolder && handleDownload(obj)
-                                        }
-                                        title={obj}
-                                    >
-                                        <span className="s3-file-icon">
-                                            {icon}
-                                        </span>
-                                        <span className="s3-file-name">
-                                            {name}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+                            {currentPrefix
+                                ? // When navigating inside a folder, show files directly
+                                  Object.entries(objects).flatMap(
+                                      ([folderPath, files]) =>
+                                          files.map((file) => {
+                                              const fullFileKey = `${folderPath}${file}`;
+                                              const {
+                                                  name: fileName,
+                                                  icon: fileIcon,
+                                              } = getFileInfo(file);
+
+                                              return (
+                                                  <button
+                                                      key={fullFileKey}
+                                                      className="s3-file-item"
+                                                      onClick={() =>
+                                                          handleItemClick(
+                                                              fullFileKey,
+                                                              false
+                                                          )
+                                                      }
+                                                      onDoubleClick={() =>
+                                                          handleItemClick(
+                                                              fullFileKey,
+                                                              false
+                                                          )
+                                                      }
+                                                      title={fullFileKey}
+                                                  >
+                                                      <span className="s3-file-icon">
+                                                          {fileIcon}
+                                                      </span>
+                                                      <span className="s3-file-name">
+                                                          {fileName}
+                                                      </span>
+                                                  </button>
+                                              );
+                                          })
+                                  )
+                                : // At root level, show folders with their contents
+                                  Object.entries(objects).map(
+                                      ([folderPath, files]) => (
+                                          <div
+                                              key={folderPath}
+                                              className="s3-folder-group"
+                                          >
+                                              {/* Folder */}
+                                              <button
+                                                  className="s3-file-item s3-folder-item"
+                                                  onClick={() =>
+                                                      handleItemClick(
+                                                          folderPath,
+                                                          true
+                                                      )
+                                                  }
+                                                  onDoubleClick={() =>
+                                                      handleItemClick(
+                                                          folderPath,
+                                                          true
+                                                      )
+                                                  }
+                                                  title={folderPath}
+                                              >
+                                                  <span className="s3-file-icon">
+                                                      📁
+                                                  </span>
+                                                  <span className="s3-file-name">
+                                                      {folderPath.replace(
+                                                          /\/$/,
+                                                          ''
+                                                      )}
+                                                  </span>
+                                              </button>
+
+                                              {/* Files in this folder - indented */}
+                                              {files.map((file) => {
+                                                  const fullFileKey = `${folderPath}${file}`;
+                                                  const {
+                                                      name: fileName,
+                                                      icon: fileIcon,
+                                                  } = getFileInfo(file);
+
+                                                  return (
+                                                      <button
+                                                          key={fullFileKey}
+                                                          className="s3-file-item s3-file-in-folder"
+                                                          onClick={() =>
+                                                              handleItemClick(
+                                                                  fullFileKey,
+                                                                  false
+                                                              )
+                                                          }
+                                                          onDoubleClick={() =>
+                                                              handleItemClick(
+                                                                  fullFileKey,
+                                                                  false
+                                                              )
+                                                          }
+                                                          title={fullFileKey}
+                                                      >
+                                                          <span className="s3-file-icon">
+                                                              {fileIcon}
+                                                          </span>
+                                                          <span className="s3-file-name">
+                                                              {fileName}
+                                                          </span>
+                                                      </button>
+                                                  );
+                                              })}
+                                          </div>
+                                      )
+                                  )}
                         </div>
                     )}
                 </div>
@@ -221,7 +354,7 @@ export default function App() {
             <div className="s3-status-bar">
                 <span className="s3-status-left">
                     {selected
-                        ? `${objects.length} item${objects.length !== 1 ? 's' : ''}`
+                        ? `${Object.keys(objects).length} folder${Object.keys(objects).length !== 1 ? 's' : ''}`
                         : `${buckets.length} bucket${buckets.length !== 1 ? 's' : ''}`}
                 </span>
                 <span>S3 Studio</span>

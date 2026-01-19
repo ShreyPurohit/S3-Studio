@@ -1,25 +1,22 @@
 import { FastifyPluginAsync } from 'fastify';
+import { createApiResponse } from '../utils/api-response';
 
 const bucketsReadRoute: FastifyPluginAsync = async (fastify) => {
     fastify.get('/buckets', async (request, reply) => {
-        const storage = (fastify as any).storage;
-        console.log('🔍 Route checking storage:', {
-            hasStorage: !!storage,
-            storageType: typeof storage,
-        });
-        fastify.log.info(
-            { hasStorage: !!storage },
-            'checking storage in route'
-        );
+        const storage = fastify.storage;
         if (!storage) {
             fastify.log.error('storage not available on fastify instance');
-            return reply.status(500).send({ error: 'storage not configured' });
+            return reply
+                .status(500)
+                .send(createApiResponse('error', 'storage not configured'));
         }
         const buckets: string[] = [];
         for await (const b of storage.listBuckets()) {
             buckets.push(b);
         }
-        return { buckets };
+        return reply.send(
+            createApiResponse('success', 'Buckets retrieved', { buckets })
+        );
     });
 };
 

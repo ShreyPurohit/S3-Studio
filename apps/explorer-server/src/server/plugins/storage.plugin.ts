@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { StorageProvider } from '../../storage/StorageProvider';
 import LocalFilesystemProvider from '../../storage/providers/local/LocalFilesystemProvider';
 import S3StorageProvider from '../../storage/providers/s3/S3StorageProvider';
+import { StorageConfig } from '../../types';
 
 // Import routes to register them in the same context
 import bucketsReadRoute from '../routes/buckets.read.route';
@@ -14,7 +15,7 @@ declare module 'fastify' {
 }
 
 const storagePlugin: FastifyPluginAsync<{
-    storage: any;
+    storage: StorageConfig;
 }> = async (fastify, opts) => {
     // Minimal registration - only local provider for now
     fastify.log.info({ storageOptions: opts }, 'storage plugin options');

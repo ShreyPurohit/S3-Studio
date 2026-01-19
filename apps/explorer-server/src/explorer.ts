@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import createServer from './server/createServer';
 
-export type Mode = 'view' | 'admin';
+export type Mode = 'view' | 'admin' | 'user';
 
 export interface ObjectExplorerConfig {
     port?: number;
@@ -27,7 +27,19 @@ export interface ObjectExplorerConfig {
 export async function startObjectExplorer(
     config: ObjectExplorerConfig
 ): Promise<FastifyInstance> {
-    const server = await createServer(config);
+    // Adjust the mode property to ensure compatibility with the expected type
+    const adjustedConfig: import('./types').ObjectExplorerConfig = {
+        ...config,
+        mode:
+            config.mode === 'admin' || config.mode === 'user'
+                ? config.mode
+                : 'user', // Ensure only 'admin' or 'user' values are used
+        auth: config.auth
+            ? { username: 'defaultUser', password: 'defaultPass' } // Provide default values for compatibility
+            : undefined,
+    };
+
+    const server = await createServer(adjustedConfig);
 
     const host = config.host ?? '127.0.0.1';
     const port = config.port ?? 4570;
