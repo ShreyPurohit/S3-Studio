@@ -34,7 +34,6 @@ const storagePlugin: FastifyPluginAsync<{
         );
         await fastify.register(bucketsReadRoute, { prefix: '/api' });
         await fastify.register(objectsReadRoute, { prefix: '/api' });
-        console.log('✅ Routes registered in storage plugin context');
 
         fastify.log.info(
             { root: opts.storage.rootDir },
@@ -49,22 +48,17 @@ const storagePlugin: FastifyPluginAsync<{
         }
 
         try {
-            console.log('🔧 Creating S3 storage provider...');
             const provider = new S3StorageProvider({
                 region,
                 accessKeyId,
                 secretAccessKey,
                 endpoint,
             });
-            console.log('🔧 Setting fastify.storage...');
             fastify.decorate('storage', provider);
-            console.log('✅ Storage provider set on fastify instance');
 
             // Register routes in the same plugin context so they can access the storage
-            console.log('🔧 Registering storage-related routes...');
             await fastify.register(bucketsReadRoute, { prefix: '/api' });
             await fastify.register(objectsReadRoute, { prefix: '/api' });
-            console.log('✅ Routes registered in storage plugin context');
 
             fastify.log.info(
                 { region, endpoint },

@@ -24,37 +24,17 @@ function getUIPath(): string {
         join(__dirname, 'ui'), // node_modules package structure
     ];
 
-    console.error('🔥 Checking paths:', possiblePaths);
-
     for (const path of possiblePaths) {
-        console.error('🔥 Checking path:', path, 'exists:', existsSync(path));
         if (existsSync(path)) {
-            // Check if this is a stale linked build (CSS file exists but is empty)
-            const cssPath = join(path, 'assets', 'index-tn0RQdqM.css'); // known stale filename
-            if (existsSync(cssPath)) {
-                const cssContent = readFileSync(cssPath, 'utf8');
-                if (cssContent.trim() === '') {
-                    console.error(
-                        '🔥 Found stale empty CSS, skipping this path'
-                    );
-                    continue; // Skip this stale path
-                }
-            }
-            console.error('🔥 Found UI path:', path);
             return path;
         }
     }
 
     // Fallback - assume local build structure
-    const fallbackPath = join(__dirname, '../../ui');
-    console.error('🔥 Using fallback path:', fallbackPath);
-    return fallbackPath;
+    return join(__dirname, '../../ui');
 }
 
 const uiPath = getUIPath();
-console.log('🔍 UI Path resolved to:', uiPath);
-console.log('🔍 UI Path exists:', existsSync(uiPath));
-console.log('🔍 Current __dirname:', dirname(fileURLToPath(import.meta.url)));
 
 const uiPlugin: FastifyPluginAsync<{ mode?: string }> = async (
     fastify,

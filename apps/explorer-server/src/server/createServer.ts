@@ -35,12 +35,8 @@ export default async function createServer(
     });
 
     // Transform the auth property to match the expected structure
-    const transformedAuth = config.auth
-        ? {
-              token: Buffer.from(
-                  `${config.auth.username}:${config.auth.password}`
-              ).toString('base64'),
-          }
+    const transformedAuth = config.auth?.token
+        ? { token: config.auth.token }
         : undefined;
 
     // Auth plugin only if admin mode

@@ -280,32 +280,34 @@ export default function App() {
                                               className="s3-folder-group"
                                           >
                                               {/* Folder */}
-                                              <button
-                                                  className="s3-file-item s3-folder-item"
-                                                  onClick={() =>
-                                                      handleItemClick(
-                                                          folderPath,
-                                                          true
-                                                      )
-                                                  }
-                                                  onDoubleClick={() =>
-                                                      handleItemClick(
-                                                          folderPath,
-                                                          true
-                                                      )
-                                                  }
-                                                  title={folderPath}
-                                              >
-                                                  <span className="s3-file-icon">
-                                                      📁
-                                                  </span>
-                                                  <span className="s3-file-name">
-                                                      {folderPath.replace(
-                                                          /\/$/,
-                                                          ''
-                                                      )}
-                                                  </span>
-                                              </button>
+                                              {folderPath !== currentPrefix && (
+                                                  <button
+                                                      className="s3-file-item s3-folder-item"
+                                                      onClick={() =>
+                                                          handleItemClick(
+                                                              folderPath,
+                                                              true
+                                                          )
+                                                      }
+                                                      onDoubleClick={() =>
+                                                          handleItemClick(
+                                                              folderPath,
+                                                              true
+                                                          )
+                                                      }
+                                                      title={folderPath}
+                                                  >
+                                                      <span className="s3-file-icon">
+                                                          📁
+                                                      </span>
+                                                      <span className="s3-file-name">
+                                                          {folderPath.replace(
+                                                              /\/$/,
+                                                              ''
+                                                          )}
+                                                      </span>
+                                                  </button>
+                                              )}
 
                                               {/* Files in this folder - indented */}
                                               {files.map((file) => {

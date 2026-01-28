@@ -34,9 +34,7 @@ export async function startObjectExplorer(
             config.mode === 'admin' || config.mode === 'user'
                 ? config.mode
                 : 'user', // Ensure only 'admin' or 'user' values are used
-        auth: config.auth
-            ? { username: 'defaultUser', password: 'defaultPass' } // Provide default values for compatibility
-            : undefined,
+        auth: config.auth,
     };
 
     const server = await createServer(adjustedConfig);

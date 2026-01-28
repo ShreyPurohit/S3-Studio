@@ -54,8 +54,7 @@ export interface ObjectExplorerConfig {
     mode: 'admin' | 'user';
     storage: StorageConfig;
     auth?: {
-        username: string;
-        password: string;
+        token?: string;
     };
 }
 
