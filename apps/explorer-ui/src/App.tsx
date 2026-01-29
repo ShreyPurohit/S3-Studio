@@ -33,9 +33,14 @@ function App() {
                 <div className="top-bar">
                     <div className="top-bar-content">
                         <div className="back-button">
-                            <button onClick={() => setSelectedBucket(null)}>
+                            <button
+                                onClick={() => setSelectedBucket(null)}
+                                className="breadcrumb-item"
+                            >
                                 <HardDrive className="icon" />
-                                <span>All Buckets</span>
+                                <span className="breadcrumb-text">
+                                    All Buckets
+                                </span>
                             </button>
                             <div className="breadcrumb">
                                 <span className="breadcrumb-separator">/</span>
